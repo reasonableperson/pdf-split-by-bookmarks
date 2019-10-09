@@ -34,9 +34,12 @@ It is surprisingly difficult to meet all these requirements!
   [2]: https://medium.com/@menglishu09/get-bookmarks-from-pdf-using-pypdf2-4166ae8eb6f6
 
 * [cpdf][3] has the required functionality, but it is not free software, and
-  the functionality breaks with very long bookmark text.
+  the functionality [does not support very long bookmark text][4].
 
-* [pdftk][4] provides access to the required metadata, but the output format is
+  [3]: https://github.com/coherentgraphics/cpdf-binaries
+  [4]: https://github.com/coherentgraphics/cpdf-binaries/issues/43
+
+* `pdftk` provides access to the required metadata, but the output format is
   horrible and it doesn't have a command-line interface to the required
   functionality. Nonetheless, it is a dependency that can be easily installed
   with `apt-get` without creating licensing issues. This repository contains
@@ -44,5 +47,7 @@ It is surprisingly difficult to meet all these requirements!
 
 ## Usage
 
-```$ ./split-by-bookmarks.py 
-usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] FILE```
+```
+$ ./split-by-bookmarks.py 
+usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] FILE
+```
