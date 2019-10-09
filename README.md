@@ -48,6 +48,21 @@ It is surprisingly difficult to meet all these requirements!
 ## Usage
 
 ```
-$ ./split-by-bookmarks.py 
-usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] FILE
+$ ./split-by-bookmarks.py -h
+usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] [--json] FILE
+
+Split a large PDF into many small PDFs based on its bookmarks.
+
+positional arguments:
+  FILE        PDF file to use as input.
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -o OUTPUT   Output directory.
+  --skip      Exclude 'duplicate' bookmarks; that is, bookmarks which start
+              and end onthe same page, and therefore would simply produce a
+              copy of a single pagewhich would be reproduced as page 1 of the
+              file for the next bookmark.
+  --force     Delete anything that is already in the output directory.
+  --json      tump a JSON file containing the bookmark metadata and exit.
 ```
