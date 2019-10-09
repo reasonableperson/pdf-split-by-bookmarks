@@ -77,7 +77,7 @@ if bookmark is not None: bookmarks.append(bookmark)
 
 # If page 1 isn't bookmarked, add a bookmark so that the pages preceding the first
 # bookmark can still be extracted.
-if bookmarks[0]['page'] != 1:
+if bookmarks[0]['page'] != '1':
     bookmarks.insert(0, {'level': '0', 'page': '1', 'text': '(start)'})
 
 # Function for generating an appropriate filename for a bookmark, given the
