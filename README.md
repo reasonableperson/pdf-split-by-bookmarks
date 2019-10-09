@@ -19,6 +19,11 @@ full of smaller PDFs, one per bookmark.
   creating multiple copies of that page, or skipping duplicates and only
   creating a file for the last bookmark on each page.
 
+* The list of bookmarks should also be avaiable in a structured format like
+  JSON. The list should include the full text of each bookmark, as well as the
+  filename of the newly-created document, and the corresponding page numbers
+  in the original document.
+
 It is surprisingly difficult to meet all these requirements!
 
 * [Sejda][1] has a 'split by bookmarks' feature, but the files it produces are
@@ -43,7 +48,8 @@ It is surprisingly difficult to meet all these requirements!
   horrible and it doesn't have a command-line interface to the required
   functionality. Nonetheless, it is a dependency that can be easily installed
   with `apt-get` without creating licensing issues. This repository contains
-  a shell wrapper around it.
+  a shell wrapper around it. (If you just want to extract the bookmark metadata
+  in a nicer format, you can use the `--json` flag to this script.)
 
 ## Usage
 
