@@ -23,12 +23,12 @@ parser.add_argument('--skip', action='store_true', help=
     "which would be reproduced as page 1 of the file for the next bookmark.")
 parser.add_argument('--force', action='store_true', help=
     'Delete anything that is already in the output directory.')
-#parser.add_argument('--json', action='store_true', help=
-#    'Dump a JSON file containing the bookmark metadata.')
+parser.add_argument('--json', action='store_true', help=
+    'tump a JSON file containing the bookmark metadata and exit.')
 args = parser.parse_args()
 
 # Extract the metadata from the input file.
-print('Extracting PDF metadata.', args.input)
+if not args.json: print('Extracting PDF metadata.', args.input)
 task = subprocess.run(['pdftk', args.input, 'dump_data_utf8'], capture_output=True)
 metadata = task.stdout.decode('utf-8').split('\n')
 
@@ -52,9 +52,9 @@ for line in metadata:
         bookmark = {}
     elif Token.level.match(line): # store the BookmarkLevel
         still_parsing_title = False
-        bookmark['level'] = Token.level.match(line).group(1)
+        bookmark['level'] = int(Token.level.match(line).group(1))
     elif Token.page.match(line): # store the BookmarkPageNumber
-        bookmark['page'] = Token.page.match(line).group(1)
+        bookmark['page'] = int(Token.page.match(line).group(1))
     elif Token.text.match(line): # store the first line of the BookmarkTitle
         still_parsing_title = True
         bookmark['text'] = Token.text.match(line).group(1)
@@ -77,26 +77,31 @@ if bookmark is not None: bookmarks.append(bookmark)
 
 # If page 1 isn't bookmarked, add a bookmark so that the pages preceding the first
 # bookmark can still be extracted.
-if bookmarks[0]['page'] != '1':
-    bookmarks.insert(0, {'level': '0', 'page': '1', 'text': '(start)'})
+if bookmarks[0]['page'] != 1:
+    bookmarks.insert(0, {'level': 0, page: 1, 'text': '(start)'})
 
 # Function for generating an appropriate filename for a bookmark, given the
 # index number (starting at zero) and the bookmark text.
 friendly_chars = re.compile(r'[ \w]')
 max_length = 100
-def make_filename(index, page, text):
+def make_filename(index, page, end_page, text):
     # remove unfriendly characters unsuitable for filenames
     text = "".join(filter(friendly_chars.match, text))
     # truncate bookmark text if necessary
     if len(text) > max_length:
         text = text[:max_length - 3] + '...'
+    pages = f'p {page}' if page == end_page else f'pp {page}-{end_page}'
     # add index and page numbers as a prefix
-    return f'{i+1:03} - p {page} - {text}.pdf'
+    return f'{i+1:03} - {pages} - {text}.pdf'
 
 # Generate the filenames and end page for each bookmark selection.
 for i, b in enumerate(bookmarks):
-    b['file'] = make_filename(i, b['page'], b['text'])
-    b['end_page'] = bookmarks[i+1]['page'] if i + 1 < len(bookmarks) else 'end'
+    if i + 1 == len(bookmarks): b['end_page'] = 'end'
+    else:
+        next_b_page = bookmarks[i+1]['page']
+        if next_b_page > b['page']: b['end_page'] = next_b_page - 1
+        else: b['end_page'] = b['page']
+    b['file'] = make_filename(i, b['page'], b['end_page'], b['text'])
 
 # Optionally filter out 'duplicates'.
 if args.skip:
@@ -107,6 +112,12 @@ if args.skip:
         else: acc.extend([last_b, next_b])
         return acc
     bookmarks = reduce(skip_duplicates, bookmarks, None)
+
+# Having fully parsed the output from PDFtk, dump a JSON object and exit if
+# that's what the user wanted to do.
+if args.json:
+    print(json.dumps(bookmarks, indent=2))
+    sys.exit()
 
 # Set up output directory.
 try: os.mkdir('out')
@@ -119,11 +130,15 @@ except OSError:
         print("There's already an out/ directory; exiting.")
         sys.exit(1)
 
+# Set up the appropriate arguments for PDFtk's cat command, which will be used
+# to actually pull out each bookmark's pages.
 def make_pdftk_args(bm, input_file, output_dir):
     page_range = f'{bm["page"]}-{bm["end_page"]}'
     output_file = os.path.join(args.output, f'{bm["file"]}')
     return ['pdftk', input_file, 'cat', page_range, 'output', output_file]
 
+# Actually run all those PDFtk commands.
+# TODO: run these in parallel.
 for i, b in enumerate(bookmarks):
     subprocess.run(make_pdftk_args(b, args.input, args.output), stdout=subprocess.PIPE)
     print(f'[{i+1}/{len(bookmarks)}] {b["file"]}')
