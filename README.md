@@ -2,7 +2,7 @@
 
 This repository contains a script for performing the task of 'un-combining'
 PDFs: it will convert a very large PDF with many bookmarks into a directory
-full of smaller bookmarks, one per bookmark.
+full of smaller PDFs, one per bookmark.
 
 * The new files must be named and ordered according to the bookmarks, so the
   filename must have an ordinal prefix in order to preserve the order of the
