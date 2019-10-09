@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description=
     'Split a large PDF into many small PDFs based on its bookmarks.')
 parser.add_argument('input', metavar='FILE', type=str, help=
     'PDF file to use as input.')
-parser.add_argument('-o, --output', default='out', dest='output', help=
+parser.add_argument('-o', default='out', dest='output', help=
     'Output directory.')
 parser.add_argument('--skip', action='store_true', help=
     "Exclude 'duplicate' bookmarks; that is, bookmarks which start and end on" +
@@ -23,8 +23,8 @@ parser.add_argument('--skip', action='store_true', help=
     "which would be reproduced as page 1 of the file for the next bookmark.")
 parser.add_argument('--force', action='store_true', help=
     'Delete anything that is already in the output directory.')
-parser.add_argument('--json', action='store_true', help=
-    'Dump a JSON file containing the bookmark metadata.')
+#parser.add_argument('--json', action='store_true', help=
+#    'Dump a JSON file containing the bookmark metadata.')
 args = parser.parse_args()
 
 # Extract the metadata from the input file.

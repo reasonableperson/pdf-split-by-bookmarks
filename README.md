@@ -16,7 +16,8 @@ full of smaller bookmarks, one per bookmark.
 
 * The list of bookmarks should be flattened, and if there are multiple
   bookmarks on the same page, the user should be able to choose between
-  creating multiple copies of that page.
+  creating multiple copies of that page, or skipping duplicates and only
+  creating a file for the last bookmark on each page.
 
 It is surprisingly difficult to meet all these requirements!
 
@@ -40,3 +41,8 @@ It is surprisingly difficult to meet all these requirements!
   functionality. Nonetheless, it is a dependency that can be easily installed
   with `apt-get` without creating licensing issues. This repository contains
   a shell wrapper around it.
+
+## Usage
+
+```$ ./split-by-bookmarks.py 
+usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] FILE```
