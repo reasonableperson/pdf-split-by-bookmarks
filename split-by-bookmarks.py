@@ -24,7 +24,7 @@ parser.add_argument('--skip', action='store_true', help=
 parser.add_argument('--force', action='store_true', help=
     'Delete anything that is already in the output directory.')
 parser.add_argument('--json', action='store_true', help=
-    'tump a JSON file containing the bookmark metadata and exit.')
+    'Dump a JSON file containing the bookmark metadata and exit.')
 args = parser.parse_args()
 
 # Extract the metadata from the input file.

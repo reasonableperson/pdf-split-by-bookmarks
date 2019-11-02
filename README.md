@@ -4,6 +4,35 @@ This repository contains a script for performing the task of 'un-combining'
 PDFs: it will convert a very large PDF with many bookmarks into a directory
 full of smaller PDFs, one per bookmark.
 
+## Usage
+
+Install `pdftk` (`apt install pdftk` or `brew install pdftk`), then:
+
+```
+$ ./split-by-bookmarks.py -h
+usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] [--json] FILE
+
+Split a large PDF into many small PDFs based on its bookmarks.
+
+positional arguments:
+  FILE        PDF file to use as input.
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -o OUTPUT   Output directory.
+  --skip      Exclude 'duplicate' bookmarks; that is, bookmarks which start
+              and end on the same page, and therefore would simply produce a
+              copy of a single pagewhich would be reproduced as page 1 of the
+              file for the next bookmark.
+  --force     Delete anything that is already in the output directory.
+  --json      Dump a JSON file containing the bookmark metadata and exit.
+```
+
+## Description
+
+I needed a tool to split PDFs by bookmarks, satisfying the following
+requirements:
+
 * The new files must be named and ordered according to the bookmarks, so the
   filename must have an ordinal prefix in order to preserve the order of the
   bookmarks.
@@ -24,7 +53,7 @@ full of smaller PDFs, one per bookmark.
   filename of the newly-created document, and the corresponding page numbers
   in the original document.
 
-It is surprisingly difficult to meet all these requirements!
+I considered using these tools to do it:
 
 * [Sejda][1] has a 'split by bookmarks' feature, but the files it produces are
   named according to page number only, and there doesn't seem to be any way to
@@ -47,28 +76,4 @@ It is surprisingly difficult to meet all these requirements!
 * `pdftk` provides access to the required metadata, but the output format is
   horrible and it doesn't have a command-line interface to the required
   functionality. Nonetheless, it is a dependency that can be easily installed
-  with `apt-get` without creating licensing issues. This repository contains
-  a shell wrapper around it. (If you just want to extract the bookmark metadata
-  in a nicer format, you can use the `--json` flag to this script.)
-
-## Usage
-
-```
-$ ./split-by-bookmarks.py -h
-usage: split-by-bookmarks.py [-h] [-o OUTPUT] [--skip] [--force] [--json] FILE
-
-Split a large PDF into many small PDFs based on its bookmarks.
-
-positional arguments:
-  FILE        PDF file to use as input.
-
-optional arguments:
-  -h, --help  show this help message and exit
-  -o OUTPUT   Output directory.
-  --skip      Exclude 'duplicate' bookmarks; that is, bookmarks which start
-              and end onthe same page, and therefore would simply produce a
-              copy of a single pagewhich would be reproduced as page 1 of the
-              file for the next bookmark.
-  --force     Delete anything that is already in the output directory.
-  --json      tump a JSON file containing the bookmark metadata and exit.
-```
+  without licensing issues. Thus, it forms the basis of this script.
